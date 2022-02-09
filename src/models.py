@@ -1,5 +1,6 @@
 import os
 import sys
+import enum
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -28,6 +29,54 @@ class Address(Base):
 
     def to_dict(self):
         return {}
+        
+class User(Base):
+    __tablename__ = 'user'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(250), unique=True)
+    firstname = Column(String(250))
+    lastname = Column(String(250))
+    email = Column (String(250))
+  
+
+
+class Post(Base):
+    __tablename__ = 'post'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    user = relationship(User)
+
+
+class Comment(Base):
+    __tablename__ = 'comment'
+    id = Column(Integer, primary_key=True)
+    comment_text = Column(String(250), nullable=False)
+    author_id = Column(Integer, ForeignKey("author.id"))
+    post_id = Column(Integer, ForeignKey("user.id"))
+    user = relationship(User)
+    post = relationship(Post)
+
+
+class Follower(Base): 
+    __tablename__ = 'follower'
+    user_from_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
+    user_to_id = Column(Integer, ForeignKey('user.id'), primary_key=True) 
+    user_from = relationship(User)
+    user_to = relationship(User)
+
+
+class Media(Base):
+    __tablename__ = 'media'
+    id = Column(Integer, primary_key=True)
+    mediatype = Column(String(50))
+    url = Column(String(50))
+    location = Column(String(250))
+    post_id = Column(Integer, ForeignKey('post.id'))
+    user = relationship(Post)
+
+
+
+
 
 ## Draw from SQLAlchemy base
 try:
